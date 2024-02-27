@@ -112,10 +112,10 @@ that sets
 
 ## Run terragrunt apply
 
-Run the following to invoke Terragrunt 
+Run the following to invoke terragrunt script
         ./runall.sh
 
-that runs
+the above one runs below terragrunt script
 
         Terragrunt run-all init
         Terragrunt run-all apply --terragrunt-exclude-dir control-center-post-config --terragrunt-non-interactive 
