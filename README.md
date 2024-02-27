@@ -11,7 +11,11 @@ First of all get the tty of the running container using the below command
 
         docker run -it -v ~/.aws:/root/.aws ghcr.io/mojaloop/control-center-util:0.9.1 /bin/bash
 
-Set the below env variables in setenv script
+Change directory to iac-run-dir 
+
+        cd /iac-run-dir
+
+Modify below environment variables in setenv as appropriate
 
         export AWS_PROFILE=oss
         export PRIVATE_REPO_TOKEN=nullvalue
@@ -20,7 +24,10 @@ Set the below env variables in setenv script
         export IAC_TERRAFORM_MODULES_TAG=v0.9.11
         export PRIVATE_REPO=example.com
 
-Then run init.sh that clones the iac-modules repo and checkout the stable version of the code ( gets from IAC_TERRAFORM_MODULES_TAG)
+Then source sentenv and run init.sh that clones the iac-modules repo and checkout the stable version of the code ( gets from IAC_TERRAFORM_MODULES_TAG)
+
+        source setenv
+        ./init.sh
 
 Then change the directory to 
 
