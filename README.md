@@ -7,6 +7,12 @@ It installs all required prerequisites for running the control center util code.
 
 First of all get the tty of the running container using the below command
 
+## Prerequisites 
+
+AWS account credentials should be configured in order to run the terragrunt scripts and create aws resources.
+
+A route 53 registered domain to use in the configurations.
+
 ## Further steps
 
         docker run -it -v ~/.aws:/root/.aws ghcr.io/mojaloop/control-center-util:0.9.1 /bin/bash
@@ -896,8 +902,24 @@ Run the below script to move the state to GitLab
 
 * It pushes these content to bootstrap project
 
+## Login to Gitlab 
+
+Get the root password of gitlab by running 
+
+      yq eval '.gitlab.vars.server_password'  $ANSIBLE_BASE_OUTPUT_DIR/control-center-deploy/inventory
+
+From now on, make changes to the files inside gitlab and execute the jobs as necessary to make changes to the control center components
+
+Netmaker gui is available at dashboard.NM_SUBDOMAIN where NM_SUBDOMAIN is:
+
+      yq eval '.netmaker.vars.netmaker_base_domain'  /iac-run-dir/output/control-center-post-config/inventory
+
+Admin user defaults to nmaker-admin, password is:
+
+      yq eval '.netmaker.vars.netmaker_admin_password'  /iac-run-dir/output/control-center-post-config/inventory
 
 First pipeline will be waiting at Deploy job. Executing this will run through the steps already run in the docker container, but will also run the control-center-post-config module which needs to run from within the internal network as it accesses the tenancy vault.
+
 
 ### control-center-post-config
 
