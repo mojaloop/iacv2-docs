@@ -1089,9 +1089,9 @@ This module invocation is dependent on control_center_deploy, ansible_cc_post_de
 ## Prerequisites for running environment pipeline
 
 1. Set aws_access_key_id CICD variable in environment repo 
- ![cicdvar](cicdvar.png)
+ ![cicdvar](image.png)
 2. Set cloud_platform_client_secret in tenancy vault for the corresponding environment 
-   ![vault cloud secret](vaultcloudsecret.png.png)
+   ![vault cloud secret](vaultcloudsecret.png)
 
 # Environment Repo on AWS Cloud Platform
 
