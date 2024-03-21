@@ -1,23 +1,27 @@
+# Introduction 
+
+The document delineates the sequential execution of code during the establishment of a control center and environments, particularly on the AWS cloud platform. It encompasses a series of steps essential for creating a control center and environment. Furthermore, it elucidates the GitLab CI script, which triggers the code execution process, Terragrunt scripts for managing Terraform configurations, modular Terraform modules for facilitating the reuse of infrastructure components, and Ansible playbooks for achieving streamlined automation within environment repositories.
+
 # Control Center Util
-Control center util repository is used to initiate the creation of a control center. This repository contains the utility scripts to run the terragrunt scripts for creating a control center. 
+The Control Center Util repository is utilized to initiate the creation of a control center. Within this repository are utility scripts designed to execute the Terragrunt scripts responsible for establishing a control center. PFB the link to control-center-util repo.
 
 https://github.com/mojaloop/control-center-util
 
-This repo builds a docker image which can be used to invoke the utility scripts and initiate the control center creation. 
+This repository builds a Docker image that can be utilized to invoke the utility scripts and initiate the creation of the control center.
 
-## Control Center Dockerfile 
+## Control-Center Dockerfile 
 
-It installs all required prerequisites for running the control center util code. Also it installs terraform, terragrunt, ansible. Installs specific Python packages using pip, including Ansible, netaddr, awscli, openshift and setuptools. Installs the 'community.kubernetes' Ansible Galaxy collection. And it copies the whole content of control-center-util repo to the container file system.
+It installs all the necessary prerequisites for running the Control Center Util code. Additionally, it installs Terraform, Terragrunt, Ansible, and specific Python packages using pip, such as Ansible, netaddr, awscli, openshift, and setuptools. Furthermore, it installs the 'community.kubernetes' Ansible Galaxy collection. Lastly, it copies the entire content of the Control Center Util repository to the container file system.
 
-First of all get the tty of the running container using the below command
-
-## Prerequisites for creating control center
+## Prerequisites for creating control-center
 
 AWS account credentials should be configured to run the terragrunt scripts and create aws resources.
 
 A route 53 registered domain to use in the configurations.
 
-## Steps to create control center
+## Steps to create control-center
+
+Run the below command to spin up the container
 
         docker run -it -v ~/.aws:/root/.aws ghcr.io/mojaloop/control-center-util:0.10.1 /bin/bash
 
