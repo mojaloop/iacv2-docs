@@ -1900,7 +1900,7 @@ It does not modify the configurations in the custom-config directory. Each time 
 Clean-up stage invokes terragrunt destroy to destroy all the resources created from the environment repo pipeline. 
 
 
-#  Destroy the control center 
+#  Steps to destroy the control center 
 
 Spin up a fresh control center util container
 
