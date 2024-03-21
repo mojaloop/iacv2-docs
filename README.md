@@ -2,7 +2,29 @@
 
  The document delineates the sequential execution of code during the establishment of a control center and environments using Mojaloop IaC (Infrastructure as Code). It encompasses a series of steps essential for creating a control center and environment. Furthermore, it elucidates the GitLab CI script, which triggers the code execution process, Terragrunt scripts for managing Terraform configurations, modular Terraform modules for facilitating the reuse of infrastructure components, and Ansible playbooks for achieving streamlined automation within environment repositories.
 
-# Control Center Util
+## Mojaloop Iac Repositories 
+
+### Iac-modules
+
+https://github.com/mojaloop/iac-modules/ 
+
+It contains the terragrunt conifguration files and terraform modules which gets used in control center and environment repositories in a mojaloop hub. 
+
+### Iac-ansible-collection-roles
+
+https://github.com/mojaloop/iac-ansible-collection-roles
+
+It contains the ansible-playbooks and roles which gets used in control center and environment repositories in a mojaloop hub. 
+
+### Control-center-util
+
+https://github.com/mojaloop/control-center-util
+
+It contains the scripts to start the process of creation of a control center from a local docker container. 
+
+The following sections describe the scripts, Terragrunt files, Terraform modules, Ansible roles, etc., as they are invoked within their respective contexts.
+
+# Control Center Utility
 The Control Center Util repository is utilized to initiate the creation of a control center. Within this repository are utility scripts designed to execute the Terragrunt scripts responsible for establishing a control center. PFB the link to control-center-util repo.
 
 https://github.com/mojaloop/control-center-util
@@ -1015,7 +1037,7 @@ This module invocation is dependent on control_center_deploy, ansible_cc_post_de
 2. Set cloud_platform_client_secret in tenancy vault for the corresponding environment 
    ![vault cloud secret](vaultcloudsecret.png)
 
-# Environment Repo on AWS Cloud Platform
+# Environment Repository
 
 The below part describes the various parts of the code flow that get executed during the creation of an environment especially, on the cloud platform AWS. It explains GitLab ci script which initiates the code execution, Terragrunt scripts for terraform configuration management, modular terraform modules for reusable infrastructure components, and ansible playbooks for streamlined automation used in the environment repositories.
 
