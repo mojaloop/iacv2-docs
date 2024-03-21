@@ -1,6 +1,6 @@
 # Introduction 
 
-The document delineates the sequential execution of code during the establishment of a control center and environments, particularly on the AWS cloud platform. It encompasses a series of steps essential for creating a control center and environment. Furthermore, it elucidates the GitLab CI script, which triggers the code execution process, Terragrunt scripts for managing Terraform configurations, modular Terraform modules for facilitating the reuse of infrastructure components, and Ansible playbooks for achieving streamlined automation within environment repositories.
+ The document delineates the sequential execution of code during the establishment of a control center and environments using Mojaloop IaC (Infrastructure as Code). It encompasses a series of steps essential for creating a control center and environment. Furthermore, it elucidates the GitLab CI script, which triggers the code execution process, Terragrunt scripts for managing Terraform configurations, modular Terraform modules for facilitating the reuse of infrastructure components, and Ansible playbooks for achieving streamlined automation within environment repositories.
 
 # Control Center Util
 The Control Center Util repository is utilized to initiate the creation of a control center. Within this repository are utility scripts designed to execute the Terragrunt scripts responsible for establishing a control center. PFB the link to control-center-util repo.
