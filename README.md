@@ -1,5 +1,9 @@
 # Control Center Util
-This repository is used to initiate an environment creation right from scratch. Control center itself can be created by using this repo. 
+Control center util repository is used to initiate the creation of a control center. This repository contains the utility scripts to run the terragrunt scripts for creating a control center. 
+
+https://github.com/mojaloop/control-center-util
+
+This repo builds a docker image which can be used to invoke the utility scripts and initiate the control center creation. 
 
 ## Control Center Dockerfile 
 
@@ -7,15 +11,15 @@ It installs all required prerequisites for running the control center util code.
 
 First of all get the tty of the running container using the below command
 
-## Prerequisites 
+## Prerequisites for creating control center
 
-AWS account credentials should be configured in order to run the terragrunt scripts and create aws resources.
+AWS account credentials should be configured to run the terragrunt scripts and create aws resources.
 
 A route 53 registered domain to use in the configurations.
 
-## Further steps
+## Steps to create control center
 
-        docker run -it -v ~/.aws:/root/.aws ghcr.io/mojaloop/control-center-util:0.9.5 /bin/bash
+        docker run -it -v ~/.aws:/root/.aws ghcr.io/mojaloop/control-center-util:0.10.1 /bin/bash
 
 Change directory to iac-run-dir 
 
@@ -42,11 +46,11 @@ Then change the directory to
 Then edit environment.yaml file as required that initially looks like 
 
         region: eu-west-1
-        domain: mojalabs.io
-        tenant: labs11
+        domain: mojaloop.live
+        tenant: labsten106
         enable_github_oauth: false
         enable_netmaker_oidc: true
-        ansible_collection_tag: v0.16.11
+        ansible_collection_tag: v0.19.3-dextest6
         gitlab_admin_rbac_group: tenant-admins
         gitlab_readonly_rbac_group: tenant-viewers
         smtp_server_enable: false
@@ -57,49 +61,16 @@ Then edit environment.yaml file as required that initially looks like
         letsencrypt_email: test@mojalabs.io
         delete_storage_on_term: true
         envs:
-        - env: dev
-            domain: labsk8s604.mojaloop.live
-            cloud_platform: aws
-            managed_svc_cloud_platform: aws
-            cloud_platform_client_secret_name: AWS_SECRET_ACCESS_KEY
-            k8s_cluster_module: base-k8s
-            cloud_region: eu-west-1
-            k8s_cluster_type: microk8s
-            ansible_collection_tag: v0.17.1
-            iac_terraform_modules_tag: v0.34.17
+          - env: dev
+            domain: labsk8s2027.mojaloop.live
             enable_vault_oauth_to_gitlab: true
             enable_grafana_oauth_to_gitlab: true
-            letsencrypt_email: test@mojalabs.io
-            dns_zone_force_destroy: true
-            longhorn_backup_object_store_destroy: true
-            nodes:
-            master-generic:
-                master: true
-                instance_type: "m5.4xlarge"
-                node_count: 3
-                storage_gbs: 300
-                node_labels:
-                workload-class.mojaloop.io/CENTRAL-LEDGER-SVC: "enabled"
-                workload-class.mojaloop.io/CORE-API-ADAPTERS: "enabled"
-                workload-class.mojaloop.io/CENTRAL-SETTLEMENT: "enabled"
-                workload-class.mojaloop.io/QUOTING-SERVICE: "enabled"
-                workload-class.mojaloop.io/ACCOUNT-LOOKUP-SERVICE: "enabled"
-                workload-class.mojaloop.io/ALS-ORACLES: "enabled"
-                workload-class.mojaloop.io/CORE-HANDLERS: "enabled"
-            agent-db:
-                instance_type: "m5.2xlarge"
-                master: false
-                node_count: 2
-                storage_gbs: 300
-                node_labels:
-                workload-class.mojaloop.io/KAFKA-CONTROL-PLANE: "enabled"
-                workload-class.mojaloop.io/KAFKA-DATA-PLANE: "enabled"
-                workload-class.mojaloop.io/RDBMS-CENTRAL-LEDGER-LIVE: "enabled"
-                workload-class.mojaloop.io/RDBMS-ALS-LIVE: "enabled"
-            vpc_cidr: "10.106.0.0/23"
-            enable_k6s_test_harness: false
-            k6s_docker_server_instance_type: "m5.2xlarge"
-            master_node_supports_traffic: true
+            enable_argocd_oauth_to_gitlab: true
+          - env: test
+            domain: labsk8s2037.mojaloop.live
+            enable_vault_oauth_to_gitlab: true
+            enable_grafana_oauth_to_gitlab: true
+            enable_argocd_oauth_to_gitlab: true
         tags:
         {
             "Origin": "Terraform",
@@ -196,8 +167,8 @@ Creates A records for Netmaker services (dashboard, API, broker, stun).
 * Nexus Server Private DNS Record:
 Creates an A record for the Nexus server with the private IP of the Docker server.
 
-* SeaweedFS Server Private DNS Record:
-Creates an A record for the SeaweedFS server with the private IP of the Docker server.
+* minio Server Private DNS Record:
+Creates an A record for the minio server with the private IP of the Docker server.
 
 * Vault Server Private DNS Record (aws_route53_record.vault_server_private):
 Creates a CNAME record for the Vault server with the internal DNS name of the internal NLB.
@@ -222,8 +193,8 @@ Creates an A record for the GitLab Runner server with the private IP of the Dock
     * Bastion OS Username
 * Docker Server Outputs:
     * Nexus Docker Repo Listening Port
-    * SeaweedFS S3 Listening Port
-    * SeaweedFS FQDN - aws_route53_record.seaweedfs_server_private.fqdn ( private ip of docker server)
+    * Minio S3 Listening Port
+    * minio FQDN - aws_route53_record.minio_server_private.fqdn ( private ip of docker server)
     * Vault Listening Port
     * Vault FQDN - aws_route53_record.vault_server_private.fqdn - aws_lb.internal.dns_name - NLB 
     * Docker host variable map 
@@ -231,21 +202,20 @@ Creates an A record for the GitLab Runner server with the private IP of the Dock
                 ansible_hostname                 = aws_route53_record.gitlab_runner_server_private.fqdn
                 gitlab_server_hostname           = aws_route53_record.gitlab_server_public.fqdn
                 gitlab_runner_version            = var.gitlab_runner_version
-                seaweedfs_s3_server_host         = aws_route53_record.seaweedfs_server_private.fqdn
-                seaweedfs_s3_listening_port      = var.seaweedfs_s3_listening_port
-                seaweedfs_s3_admin_user          = "admin"
-                seaweedfs_s3_admin_access_key    = random_password.admin_s3_access_key.result
-                seaweedfs_s3_admin_secret_key    = random_password.admin_s3_access_secret.result
-                seaweedfs_s3_gitlab_user         = "gitlab"
-                seaweedfs_s3_gitlab_access_key   = random_password.gitlab_s3_access_key.result
-                seaweedfs_s3_gitlab_secret_key   = random_password.gitlab_s3_access_secret.result
+                minio_s3_server_host         = aws_route53_record.minio_server_private.fqdn
+                minio_s3_listening_port      = var.minio_s3_listening_port
+                minio_s3_admin_user          = "admin"
+                minio_s3_admin_access_key    = random_password.admin_s3_access_key.result
+                minio_s3_admin_secret_key    = random_password.admin_s3_access_secret.result
+                minio_s3_gitlab_user         = "gitlab"
+                minio_s3_gitlab_access_key   = random_password.gitlab_s3_access_key.result
+                minio_s3_gitlab_secret_key   = random_password.gitlab_s3_access_secret.result
                 nexus_admin_password             = random_password.nexus_admin_password.result
                 nexus_docker_repo_listening_port = var.nexus_docker_repo_listening_port
                 docker_extra_volume_name         = "docker-extra"
                 docker_extra_vol_mount           = true
                 docker_extra_ebs_volume_id       = aws_instance.docker_server.ebs_block_device.*.volume_id[0]
                 docker_extra_volume_size_mb      = aws_instance.docker_server.ebs_block_device.*.volume_size[0] * 1074
-                seaweedfs_num_volumes            = 100
                 vault_listening_port             = var.vault_listening_port
                 vault_fqdn                       = aws_route53_record.vault_server_private.fqdn
                 vault_gitlab_token               = random_password.gitlab_root_token.result
@@ -317,7 +287,7 @@ The following ansible-playbook gets executed
           - mojaloop.iac.gitlab_common
           - mojaloop.iac.docker
           - mojaloop.iac.nexus_server
-          - mojaloop.iac.seaweedfs_server
+          - mojaloop.iac.minio
 
       - hosts: gitlab
         become: true
@@ -367,59 +337,11 @@ The following ansible-playbook gets executed
 * Set active realms: Uses the uri module to set the active realms in Nexus by sending a PUT request with the necessary information.
 * Set anonymous access: Uses the uri module to set anonymous access in Nexus by sending a PUT request with the necessary information.
 
-##### Seaweedfs-server role on docker node
+##### Minio role on docker node
 
-* This ansible role creates a docker-compose file to run the below services based on a template
-    * Master Service: Runs the SeaweedFS master with specific configurations.
-    * Volume Service: Runs the SeaweedFS volume server, connecting to the master, and specifies the directory for storing data.
-    * Filer Service: Runs the SeaweedFS filer, connecting to the master.
-    * S3 Service: Runs the SeaweedFS S3 server, connecting to the filer, and uses a configuration file (seaweedfs.s3-iam.json).
-    * seaweedfs.s3-iam.json sets up the user auth and rbac; seaweedfs_s3_gitlab_user, seaweedfs_s3_gitlab_access_key, seaweedfs_s3_gitlab_secret_key etc are getting passed to this terraform module. The values are based on the (random_password.gitlab_s3_access_key.result) terraform output variable of control-center-deploy
-<!------>
-            output "gitlab_s3_access_key" {
-            sensitive = true
-            value     = random_password.gitlab_s3_access_key.result
-            }
-<!------>
-           {
-            "identities": [
-                {
-                "name": "{{ seaweedfs_s3_admin_user }}",
-                "credentials": [
-                    {
-                    "accessKey": "{{ seaweedfs_s3_admin_access_key }}",
-                    "secretKey": "{{ seaweedfs_s3_admin_secret_key }}"
-                    }
-                ],
-                "actions": [
-                    "Admin",
-                    "Read",
-                    "List",
-                    "Tagging",
-                    "Write"
-                ]
-                },
-                {
-                "name": "{{ seaweedfs_s3_gitlab_user }}",
-                "credentials": [
-                    {
-                    "accessKey": "{{ seaweedfs_s3_gitlab_access_key }}",
-                    "secretKey": "{{ seaweedfs_s3_gitlab_secret_key }}"
-                    }
-                ],
-                "actions": [
-                    "Admin",
-                    "Read",
-                    "List",
-                    "Tagging",
-                    "Write"
-                ]
-                }
-            ]
-            }
-    
-   * WebDAV Service: Runs the SeaweedFS WebDAV server, connecting to the filer.
-   * Prometheus Service: Mounts a prometheus.yaml configuration file. Runs Prometheus with specified configurations, including the location of the prometheus.yaml file.
+* This ansible role installs and runs the minio server
+* It configures a minio client , creates minio user and access policy for gitlab. 
+* It creates empty buckets ["gitlab-registry", "gitlab-artifacts", "gitlab-external-diffs", "gitlab-lfs-objects", "gitlab-uploads", "gitlab-packages", "gitlab-dependency-proxy", "gitlab-terraform-state", "gitlab-registry", "gitlab-pages"] for gitlab
 
 ##### Gitlab common role on gitlab node
 
@@ -452,7 +374,7 @@ The following ansible-playbook gets executed
 * Configure GitLab:
   * The playbook uses the template module to render a Jinja2 template (gitlab.rb.j2) and places the resulting configuration file (/etc/gitlab/gitlab.rb).
   * This configuration file contains various GitLab settings like registry_storage, SMTP settings, object storage etc
-  * Seaweedfs URL, username, password etc are configured in this file to set up the object storage and registry storage of GitLab 
+  * Minio URL, username, password etc are configured in this file to set up the object storage and registry storage of GitLab 
 
 * Start GitLab:
   * The command module is used to execute gitlab-ctl reconfigure, which applies the GitLab configuration changes.
@@ -471,10 +393,6 @@ The following ansible-playbook gets executed
 * Setup Backups:
   * Another Jinja2 template (backups.j2) is rendered and placed in /etc/cron.daily/backups.
   * This task involves configuring backup-related settings for GitLab.
-
-* Create Empty Buckets:
-  * The playbook uses the amazon.aws.s3_bucket Ansible module to create empty buckets on an S3-compatible storage service - seaweedfs here.
-  * The loop traverses through the variable value ["gitlab-registry", "gitlab-artifacts", "gitlab-external-diffs", "gitlab-lfs-objects", "gitlab-uploads", "gitlab-packages", "gitlab-dependency-proxy", "gitlab-terraform-state", "gitlab-registry", "gitlab-pages"] and create buckets with these names in seaweedfs.
 
 ##### Gitlab ci role on docker node
 
@@ -522,9 +440,9 @@ The module invocation is dependent on ansible-cc-deploy and control-center-deplo
         gitlab_readonly_rbac_group       = local.env_vars.gitlab_readonly_rbac_group
         enable_netmaker_oidc             = local.env_vars.enable_netmaker_oidc
         netmaker_oidc_redirect_url       = dependency.control_center_deploy.outputs.netmaker_oidc_callback_url
-        seaweedfs_s3_listening_port      = dependency.control_center_deploy.outputs.seaweedfs_s3_listening_port
+        minio_s3_listening_port          = dependency.control_center_deploy.outputs.minio_s3_listening_port
         nexus_docker_repo_listening_port = dependency.control_center_deploy.outputs.nexus_docker_repo_listening_port
-        seaweedfs_fqdn                   = dependency.control_center_deploy.outputs.seaweedfs_fqdn
+        minio_fqdn                       = dependency.control_center_deploy.outputs.minio_fqdn
         nexus_fqdn                       = dependency.control_center_deploy.outputs.nexus_fqdn
         tenant_vault_listening_port      = dependency.control_center_deploy.outputs.tenant_vault_listening_port
         vault_fqdn                       = dependency.control_center_deploy.outputs.vault_fqdn
@@ -551,7 +469,7 @@ In summary, this module creates the GitLab group named 'iac', the GitLab project
   * iam_user_key_id, iam_user_key_secret, iac_templates_tag, iac_terraform_modules_tag, control_center_cloud_provider: Variables associated with the "bootstrap" project.
 
 * GitLab Group Variables associated with "iac" group:
-  * private_repo_user, private_repo, bootstrap_project_id, private_repo_token, nexus_fqdn, nexus_docker_repo_listening_port, seaweedfs_fqdn, seaweedfs_s3_listening_port, vault_fqdn tenant_vault_listening_port
+  * private_repo_user, private_repo, bootstrap_project_id, private_repo_token, nexus_fqdn, nexus_docker_repo_listening_port, minio_fqdn, minio_s3_listening_port, vault_fqdn tenant_vault_listening_port
 
 * GitLab Applications:
   * netmaker_oidc: An OIDC application named "netmaker_oidc"
@@ -914,7 +832,7 @@ Admin user defaults to nmaker-admin, password is:
 
 OIDC integration is preconfigured for netmaker using gitlab as a provider. A gitlab user can use the OIDC option to login, however, before they can see anything, an admin needs to change their account to be an admin and select the networks that they can see (or all)
 
-After connecting to netmaker as an admin, you can select the only node that is in the ctrl-center network and enable both the ingress gateway and egress gateway options on the node. The network for the egress gateway should be the control center network (where gitlab, runner, nexus, and seaweed run): default is 10.25.0.0/22
+After connecting to netmaker as an admin, you can select the only node that is in the ctrl-center network and enable both the ingress gateway and egress gateway options on the node. The network for the egress gateway should be the control center network : default is 10.25.0.0/22
 
 Now you can create a external client (wireguard profile) using the node as a gateway. Download the profile and add it to your wireguard client.
 
@@ -1552,7 +1470,7 @@ Enable auto restart of netclient service\
 
 Installs and configures haproxy
 
-Haproxy routing configuration is also given. It routes the traffic to vault, seaweed, and nexus.
+Haproxy routing configuration is also given. It routes the traffic to vault, minio, and nexus.
 
 
 ##### Microk8s role on master node
