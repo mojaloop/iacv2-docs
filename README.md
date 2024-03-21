@@ -1888,3 +1888,39 @@ Redundant as istio ingress gateways are in use.
     ansible-playbook name is managed_services_deploy
 
    This is for preparing the bastion node created for managed services resources. Bastion-common role and netclient role are getting executed on the bastion node. 
+
+
+# 3. Refresh-templates stage in the GitLab pipeline 
+
+Refresh templates stage refreshes the terragrunt configuration , gitlab scripts in the environment repo. It gets the code referenced by the git commit tag provided in the CICD variable IAC_TERRAFORM_MODULES_TAG from iac-modules repo and updates the corresponding environment repo. It overwrites the configuration files in the default-config repo.
+It does not modify the configurations in the custom-config directory. Each time when pipeline starts , it merges default configuration with custom configuration and pipeline runs based on the configuration resulted from the merge.
+
+# 4. Clean-up stage in the GitLab pipeline 
+
+Clean-up stage invokes terragrunt destroy to destroy all the resources created from the environment repo pipeline. 
+
+
+#  Destroy the control center 
+
+Spin up a fresh control center util container
+
+        docker run -it -v ~/.aws:/root/.aws ghcr.io/mojaloop/control-center-util:0.10.1 /bin/bash
+
+Download the inventory file generated in the control-center-deploy stage from gitlab artifacts.
+
+Copy the inventory file into the above container.
+
+Also get the value of the CICD variable IAC_TERRAFORM_MODULES_TAG from the bootstrap repo. It has to be passed as the parameter in the coming steps. 
+
+Change directory to iac-run-dir 
+
+        cd /iac-run-dir
+
+Run the script move-state-from-gitlab.sh
+
+         ./move-state-from-gitlab.sh INVENTORY_FILE_PATH AWS_PROFILE IAC_TERRAFORM_MODULES_TAG [WORK_DIR] [BOOTSTRAP_PROJECT_ID]
+
+After running the above step , run the destroy-control-center.sh script to destroy the control center. 
+
+         ./destroy-control-center-cleanup.sh IAC_TERRAFORM_MODULES_TAG AWS_PROFILE [WORKDIR]
+
