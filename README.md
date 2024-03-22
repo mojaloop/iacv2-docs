@@ -1036,6 +1036,24 @@ This module invocation is dependent on control_center_deploy, ansible_cc_post_de
  ![cicdvar](image.png)
 2. Set cloud_platform_client_secret in tenancy vault for the corresponding environment 
    ![vault cloud secret](vaultcloudsecret.png)
+3. Add custom configuration files as required, you can find the default configuration files ![here](https://github.com/mojaloop/iac-modules/tree/main/terraform/k8s/default-config)
+4. Create a pm4ml-vars.yaml configuration file if it is payment manager deployment , PFB a sample custom configuration for pm4ml-vars.yaml
+
+          pm4mls:
+           - pm4ml: pm4mltest10
+             pm4ml_chart_version: 9.0.11
+             pm4ml_external_mcm_public_fqdn: mcm.awsdev.labsk8s1012.mojaloop.live
+             pm4ml_external_switch_oidc_url: https://keycloak.awsdev.labsk8s1012.mojaloop.live
+             pm4ml_external_switch_fqdn: extapi.awsdev.labsk8s1012.mojaloop.live
+             pm4ml_dfsp_id: pm4mltest10
+           - pm4ml: pm4mltest11
+             pm4ml_chart_version: 9.0.11
+             pm4ml_external_mcm_public_fqdn: mcm.awsdev.labsk8s1012.mojaloop.live
+             pm4ml_external_switch_oidc_url: https://keycloak.awsdev.labsk8s1012.mojaloop.live
+             pm4ml_external_switch_fqdn: extapi.awsdev.labsk8s1012.mojaloop.live
+             pm4ml_dfsp_id: pm4mltest11
+             core_connector_enabled: true
+
 
 # Environment Repository
 
