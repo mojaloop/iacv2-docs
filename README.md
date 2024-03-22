@@ -45,7 +45,7 @@ A route 53 registered domain to use in the configurations.
 
 Run the below command to spin up the container
 
-        docker run -it -v ~/.aws:/root/.aws ghcr.io/mojaloop/control-center-util:0.10.1 /bin/bash
+        docker run -it -v ~/.aws:/root/.aws ghcr.io/mojaloop/control-center-util:5.0.0 /bin/bash
 
 Change directory to iac-run-dir 
 
