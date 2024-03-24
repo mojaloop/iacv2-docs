@@ -57,7 +57,7 @@ Modify below environment variables in setenv as appropriate
         export PRIVATE_REPO_TOKEN=nullvalue
         export PRIVATE_REPO_USER=nullvalue
         export ANSIBLE_BASE_OUTPUT_DIR=$PWD/output
-        export IAC_TERRAFORM_MODULES_TAG=v0.9.11
+        export IAC_TERRAFORM_MODULES_TAG=v5.0.0
         export PRIVATE_REPO=example.com
 
 Then source sentenv and run init.sh that clones the iac-modules repo and checkout the stable version of the code ( gets from IAC_TERRAFORM_MODULES_TAG)
@@ -76,7 +76,7 @@ Then edit environment.yaml file as required that initially looks like
         tenant: labsten106
         enable_github_oauth: false
         enable_netmaker_oidc: true
-        ansible_collection_tag: v0.19.3-dextest6
+        ansible_collection_tag: v5.0.0
         gitlab_admin_rbac_group: tenant-admins
         gitlab_readonly_rbac_group: tenant-viewers
         smtp_server_enable: false
