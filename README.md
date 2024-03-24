@@ -116,6 +116,7 @@ that sets
 ## Run terragrunt apply
 
 Run the following to invoke terragrunt script
+        
         ./runall.sh
 
 the above one runs below terragrunt script
