@@ -87,16 +87,16 @@ Then edit environment.yaml file as required that initially looks like
         letsencrypt_email: test@mojalabs.io
         delete_storage_on_term: true
         envs:
-          - env: dev
-            domain: labsk8s2027.mojaloop.live
-            enable_vault_oauth_to_gitlab: true
-            enable_grafana_oauth_to_gitlab: true
-            enable_argocd_oauth_to_gitlab: true
-          - env: test
-            domain: labsk8s2037.mojaloop.live
-            enable_vault_oauth_to_gitlab: true
-            enable_grafana_oauth_to_gitlab: true
-            enable_argocd_oauth_to_gitlab: true
+         - env: dev
+           domain: labsk8s604.mojaloop.live
+           vault_oidc_domain: int.dev
+           grafana_oidc_domain: int.dev
+           argocd_oidc_domain: int.dev
+         - env: test
+           domain: labsk8s604.mojaloop.live
+           vault_oidc_domain: int.test
+           grafana_oidc_domain: int.test
+           argocd_oidc_domain: int.test
         tags:
         {
             "Origin": "Terraform",
