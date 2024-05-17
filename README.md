@@ -1033,9 +1033,9 @@ This module invocation is dependent on control_center_deploy, ansible_cc_post_de
 
 ## Prerequisites for running environment pipeline
 
-1. Set aws_access_key_id CICD variable in environment repo 
+1. Create and set aws_access_key_id CICD variable in environment repo 
  ![cicdvar](image.png)
-2. Set cloud_platform_client_secret in tenancy vault for the corresponding environment 
+2. Create the secret cloud_platform_client_secret in tenancy vault and copy AWS_SECRET_ACCESS_KEY as value, for the corresponding environment 
    ![vault cloud secret](vaultcloudsecret.png)
 3. Add custom configuration files as required in custom-config path in env repo, you can find the default configuration files [here](https://github.com/mojaloop/iac-modules/tree/main/terraform/k8s/default-config)
 4. Create a pm4ml-vars.yaml configuration file in custom-config path  if it is payment manager deployment , PFB a sample custom configuration for pm4ml-vars.yaml
