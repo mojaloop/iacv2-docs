@@ -884,7 +884,8 @@ Select the host in the drop down and fill up “8.8.8.8” in “Default Client 
 Create a client config by choosing the remote gateway just created as the “Remote Access Gateway” and pressing "create config".  Type a unique client id to identify the client configuration
 ![](netmakerClientConfig.png)
 
-Download the wireguard vpn profile and share to the user in a secure way. 
+Download the client config created above and share it with the user. 
+User can import by choosing “Import Tunnel(s) from file..” option in wireguard vpn client. 
 
 ## Login to vault 
 
